@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
@@ -27,7 +27,6 @@ interface ShowcaseData {
 const ShowcaseViewScreen: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const dispatch = useDispatch();
-    //const navigate = useNavigate();
     const [showcase, setShowcase] = useState<ShowcaseData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -43,7 +42,6 @@ const ShowcaseViewScreen: React.FC = () => {
                 sellerId: showcase.user._id 
             }));
             
-            //navigate('/cart');
         }
     };
 
