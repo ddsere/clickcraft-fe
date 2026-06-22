@@ -13,7 +13,7 @@ export interface ShippingAddress {
     address: string;
     city: string;
     postalCode: string;
-    country: string;
+    country: '' | string;
 }
 
 interface CartState {
@@ -22,17 +22,29 @@ interface CartState {
     paymentMethod: string;
 }
 
-interface CartState {
-    cartItems: CartItem[];
-}
+// Safe localStorage parsers
+const parseCartItems = (): CartItem[] => {
+    try {
+        const stored = localStorage.getItem('cartItems');
+        const parsed = stored ? JSON.parse(stored) : [];
+        return Array.isArray(parsed) ? parsed : [];  // ✅ guarantees array
+    } catch {
+        return [];
+    }
+};
+
+const parseShippingAddress = (): ShippingAddress => {
+    try {
+        const stored = localStorage.getItem('shippingAddress');
+        return stored ? JSON.parse(stored) : { address: '', city: '', postalCode: '', country: '' };
+    } catch {
+        return { address: '', city: '', postalCode: '', country: '' };
+    }
+};
 
 const initialState: CartState = {
-    cartItems: localStorage.getItem('cartItems')
-        ? JSON.parse(localStorage.getItem('cartItems') as string)
-        : [],
-    shippingAddress: localStorage.getItem('shippingAddress')
-        ? JSON.parse(localStorage.getItem('shippingAddress') as string)
-        : { address: '', city: '', postalCode: '', country: '' },
+    cartItems: parseCartItems(),
+    shippingAddress: parseShippingAddress(),
     paymentMethod: 'PayPal',
 };
 
@@ -42,7 +54,6 @@ const cartSlice = createSlice({
     reducers: {
         addToCart: (state, action: PayloadAction<CartItem>) => {
             const item = action.payload;
-            
             const existItem = state.cartItems.find((x) => x._id === item._id);
 
             if (existItem) {
@@ -55,7 +66,7 @@ const cartSlice = createSlice({
 
             localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
         },
-        
+
         removeFromCart: (state, action: PayloadAction<string>) => {
             state.cartItems = state.cartItems.filter((x) => x._id !== action.payload);
             localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
