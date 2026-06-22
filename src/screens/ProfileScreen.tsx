@@ -7,7 +7,7 @@ import { type RootState } from "../store/store";
 const ProfileScreen: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [_error, setError] = useState("");
 
   const { userInfo } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
